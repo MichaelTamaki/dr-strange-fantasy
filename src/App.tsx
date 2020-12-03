@@ -43,12 +43,7 @@ function App() {
     <div style={{ maxWidth: "800px", margin: "auto" }}>
       <img style={{ maxWidth: "500px" }} src={drStrangeThinking} alt="Doctor Strange Thinking" />
       <h2>Week 13 Matchups</h2>
-      <p>Outcome {outcomeIndex + 1} out of {outcomes.length}</p>
       <p>Click on a team to lock a simulate a win for the matchup</p>
-      <div>
-        <button onClick={() => outcomeIndex + 1 < outcomes.length && setOutcomeIndex(outcomeIndex + 1)}>+</button>
-        <button onClick={() => outcomeIndex - 1 >= 0 && setOutcomeIndex(outcomeIndex - 1)}>-</button>
-      </div>
       <table>
         <thead>
           <tr>
@@ -68,6 +63,11 @@ function App() {
           }
         </tbody>
       </table>
+      <p>Outcome {outcomeIndex + 1} out of {outcomes.length}</p>
+      <div>
+        <button onClick={() => outcomeIndex + 1 < outcomes.length && setOutcomeIndex(outcomeIndex + 1)}>+</button>
+        <button onClick={() => outcomeIndex - 1 >= 0 && setOutcomeIndex(outcomeIndex - 1)}>-</button>
+      </div>
 
       <h2>Teams</h2>
       <table>
