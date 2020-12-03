@@ -60,13 +60,13 @@ export const ASS_INTERFERENCE: LeagueData = {
       teamName: "Saquon Barkley's ACL",
       wins: 5,
       losses: 7,
-      pointsFor: 0
+      pointsFor: 200
     },
     {
       teamName: "Qhazz Q. Qichaels",
       wins: 5,
       losses: 7,
-      pointsFor: 0
+      pointsFor: 100
     },
     {
       teamName: "Sidney with a Knife",
