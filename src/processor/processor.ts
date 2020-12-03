@@ -74,7 +74,7 @@ export function clinchedPlayoffs(league: LeagueData, teamName: string, playoffTe
     return cutoffTeams.map((t) => {
       return {
         teamName: t.teamName,
-        pointDiff: team.pointsFor - t.pointsFor
+        pointDiff: Math.round((team.pointsFor - t.pointsFor) * 100) / 100
       };
     });
   } else {
