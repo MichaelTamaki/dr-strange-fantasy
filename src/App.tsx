@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { ASS_INTERFERENCE } from './processor/data';
 import { clinchedPlayoffs, LeagueData, produceAllOutcomes } from './processor/processor';
+import drStrangeThinking from './dr-strange-thinking.jpeg';
+import drStrangeTalking from './dr-strange-talking.jpeg';
 
 const ALL_OUTCOMES = produceAllOutcomes(ASS_INTERFERENCE);
 const PLAYOFF_TEAMS = 8;
@@ -38,7 +40,35 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div style={{ maxWidth: "800px", margin: "auto" }}>
+      <img style={{ maxWidth: "500px" }} src={drStrangeThinking} alt="Doctor Strange Thinking" />
+      <h2>Week 13 Matchups</h2>
+      <p>Outcome {outcomeIndex + 1} out of {outcomes.length}</p>
+      <p>Click on a team to lock a simulate a win for the matchup</p>
+      <div>
+        <button onClick={() => outcomeIndex + 1 < outcomes.length && setOutcomeIndex(outcomeIndex + 1)}>+</button>
+        <button onClick={() => outcomeIndex - 1 >= 0 && setOutcomeIndex(outcomeIndex - 1)}>-</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Team 1</th>
+            <th>vs.</th>
+            <th>Team 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          { outcomes[outcomeIndex].week13Matchups.map(function (matchup, index) {
+              return <tr>
+                <td onClick={() => setTeamWin(index, true)}>{matchup.teamName1}</td>
+                <td style={{ background: lockedWins.find((l) => index === l.matchupIndex) && "green" }}>{matchup.team1Won ? "<-" : "->"}</td>
+                <td onClick={() => setTeamWin(index, false)}>{matchup.teamName2}</td>
+              </tr>
+            })
+          }
+        </tbody>
+      </table>
+
       <h2>Teams</h2>
       <table>
         <thead>
@@ -67,33 +97,6 @@ function App() {
         </tbody>
       </table>
 
-      <h2>Week 13 Matchups</h2>
-      <p>Outcome {outcomeIndex + 1} out of {outcomes.length}</p>
-      <p>Click on a team to lock a simulate a win for the matchup</p>
-      <div>
-        <button onClick={() => outcomeIndex + 1 < outcomes.length && setOutcomeIndex(outcomeIndex + 1)}>+</button>
-        <button onClick={() => outcomeIndex - 1 >= 0 && setOutcomeIndex(outcomeIndex - 1)}>-</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Team 1</th>
-            <th>vs.</th>
-            <th>Team 2</th>
-          </tr>
-        </thead>
-        <tbody>
-          { outcomes[outcomeIndex].week13Matchups.map(function (matchup, index) {
-              return <tr>
-                <td onClick={() => setTeamWin(index, true)}>{matchup.teamName1}</td>
-                <td style={{ background: lockedWins.find((l) => index === l.matchupIndex) && "green" }}>{matchup.team1Won ? "<-" : "->"}</td>
-                <td onClick={() => setTeamWin(index, false)}>{matchup.teamName2}</td>
-              </tr>
-            })
-          }
-        </tbody>
-      </table>
-
       <h2>Given a team, how many outcomes lead to playoffs?</h2>
       <select value={selectedTeamName} onChange={(e) => { setSelectedTeamName(e.target.value) }}>
         { outcomes[outcomeIndex].teams.map((team, index) => <option value={team.teamName}>{team.teamName}</option>)}
@@ -102,6 +105,7 @@ function App() {
       <p>You are guaranteed playoffs in {outcomes.filter((o) => clinchedPlayoffs(o, selectedTeamName, PLAYOFF_TEAMS) === true).length} outcomes</p>
       <p>You are on the edge of playoffs in {outcomes.filter((o) => typeof clinchedPlayoffs(o, selectedTeamName, PLAYOFF_TEAMS) === "object").length} outcomes</p>
       <p>You are eliminated from playoffs in {outcomes.filter((o) => clinchedPlayoffs(o, selectedTeamName, PLAYOFF_TEAMS) === false).length} outcomes</p>
+      <img style={{ maxWidth: "500px" }} src={drStrangeTalking} alt="Doctor Strange Thinking" />
     </div>
   );
 }
