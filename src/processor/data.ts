@@ -1,4 +1,4 @@
-import { LeagueData, sortTeams, TeamData } from "./processor";
+import { LeagueData, sortTeams } from "./processor";
 
 export const ASS_INTERFERENCE: LeagueData = {
   teams: [

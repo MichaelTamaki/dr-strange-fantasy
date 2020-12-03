@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { ASS_INTERFERENCE } from './processor/data';
-import { clinchedPlayoffs, LeagueData, produceAllOutcomes, TeamData, WeekMatchups } from './processor/processor';
+import { clinchedPlayoffs, LeagueData, produceAllOutcomes } from './processor/processor';
 
 const ALL_OUTCOMES = produceAllOutcomes(ASS_INTERFERENCE);
 const PLAYOFF_TEAMS = 8;
