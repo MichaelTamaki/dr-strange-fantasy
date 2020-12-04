@@ -1,25 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { ASS_INTERFERENCE } from './processor/data';
+import { ASS_INTERFERENCE, OKTA_AFL } from './processor/data';
 import { clinchedPlayoffs, LeagueData, produceAllOutcomes } from './processor/processor';
 import drStrangeThinking from './dr-strange-thinking.jpeg';
 import drStrangeTalking from './dr-strange-talking.jpeg';
 
-const ALL_OUTCOMES = produceAllOutcomes(ASS_INTERFERENCE);
-const PLAYOFF_TEAMS = 8;
-
 function App() {
-  const [outcomes, setOutcomes] = useState<LeagueData[]>(ALL_OUTCOMES);
+  const [selectedDataIndex, setSelectedDataIndex] = useState<number>(0);
+  const [allOutcomes, setAllOutcomes] = useState<LeagueData[]>();
+  const [outcomes, setOutcomes] = useState<LeagueData[]>();
   const [outcomeIndex, setOutcomeIndex] = useState<number>(0);
   const [lockedWins, setLockedWins] = useState<{ matchupIndex: number, team1Won: boolean; }[]>([]);
-  const [selectedTeamName, setSelectedTeamName] = useState<string>(ALL_OUTCOMES[0].teams[0].teamName);
+  const [selectedTeamName, setSelectedTeamName] = useState<string>();
 
   useEffect(() => {
-    setOutcomes(ALL_OUTCOMES.filter((outcome) => {
+    const o = selectedDataIndex === 0 ? produceAllOutcomes(ASS_INTERFERENCE) : produceAllOutcomes(OKTA_AFL);
+    setAllOutcomes(o);
+    setOutcomes(o);
+    setOutcomeIndex(0);
+    setLockedWins([]);
+    setSelectedTeamName(o[0].teams[0].teamName);
+  }, [selectedDataIndex]);
+
+  useEffect(() => {
+    if (!allOutcomes) { return; }
+    setOutcomes(allOutcomes.filter((outcome) => {
       return lockedWins.every((l) => outcome.week13Matchups[l.matchupIndex].team1Won === l.team1Won)
     }))
     setOutcomeIndex(0);
-  }, [lockedWins]);
+  }, [allOutcomes, lockedWins]);
 
   function setTeamWin(matchupIndex: number, team1Won: boolean) {
     const existingIndex = lockedWins.findIndex((l) => l.matchupIndex === matchupIndex);
@@ -35,15 +44,21 @@ function App() {
     setLockedWins(lockedWins.splice(0));
   }
 
-  if (!outcomes) {
-    return <h1>Calculating outcomes...</h1>;
+  if (!outcomes || !selectedTeamName) {
+    return <h1>Loading...</h1>;
   }
 
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
       <img style={{ maxWidth: "500px" }} src={drStrangeThinking} alt="Doctor Strange Thinking" />
+      <div>
+        <select value={selectedDataIndex} onChange={(e) => { setSelectedDataIndex(Number(e.target.value)) }}>
+          <option value="0">Interference</option>
+          <option value="1">OKTA - AFL</option>
+        </select>
+      </div>
       <h2>Week 13 Matchups</h2>
-      <p>Click on a team to lock a simulate a win for the matchup</p>
+      <p>Click on a team to lock a win for the matchup</p>
       <table>
         <thead>
           <tr>
@@ -83,7 +98,7 @@ function App() {
         </thead>
         <tbody>
           { outcomes[outcomeIndex].teams.map(function (team, index) {
-              const playoffEligible = clinchedPlayoffs(outcomes[outcomeIndex], team.teamName, PLAYOFF_TEAMS);
+              const playoffEligible = clinchedPlayoffs(outcomes[outcomeIndex], team.teamName);
               return <tr style={{ background: playoffEligible === true ? "green" : playoffEligible === false ? "red" : undefined }}>
                 <td>{index + 1}</td>
                 <td>{team.teamName}</td>
@@ -102,9 +117,9 @@ function App() {
         { outcomes[outcomeIndex].teams.map((team, index) => <option value={team.teamName}>{team.teamName}</option>)}
       </select>
       <p>Out of {outcomes.length} outcomes...</p>
-      <p>You are guaranteed playoffs in {outcomes.filter((o) => clinchedPlayoffs(o, selectedTeamName, PLAYOFF_TEAMS) === true).length} outcomes</p>
-      <p>You are on the edge of playoffs in {outcomes.filter((o) => typeof clinchedPlayoffs(o, selectedTeamName, PLAYOFF_TEAMS) === "object").length} outcomes</p>
-      <p>You are eliminated from playoffs in {outcomes.filter((o) => clinchedPlayoffs(o, selectedTeamName, PLAYOFF_TEAMS) === false).length} outcomes</p>
+      <p>You are guaranteed playoffs in {outcomes.filter((o) => clinchedPlayoffs(o, selectedTeamName) === true).length} outcomes</p>
+      <p>You are on the edge of playoffs in {outcomes.filter((o) => typeof clinchedPlayoffs(o, selectedTeamName) === "object").length} outcomes</p>
+      <p>You are eliminated from playoffs in {outcomes.filter((o) => clinchedPlayoffs(o, selectedTeamName) === false).length} outcomes</p>
       <img style={{ maxWidth: "500px" }} src={drStrangeTalking} alt="Doctor Strange Thinking" />
     </div>
   );

@@ -14,6 +14,7 @@ export interface WeekMatchups {
 export interface LeagueData {
   teams: TeamData[];
   week13Matchups: WeekMatchups[];
+  playoffTeams: number;
 }
 
 export function sortTeams(team1: TeamData, team2: TeamData) {
@@ -57,16 +58,17 @@ export function produceAllOutcomes(league: LeagueData): LeagueData[] {
   return branch1Outcomes.concat(branch2Outcomes);
 };
 
-export function clinchedPlayoffs(league: LeagueData, teamName: string, playoffTeams: number): boolean | { teamName: string; pointDiff: number; }[] {
+export function clinchedPlayoffs(league: LeagueData, teamName: string): boolean | { teamName: string; pointDiff: number; }[] {
   const teamIndex = league.teams.findIndex((t) => t.teamName === teamName);
 
   if (teamIndex === -1) {
+    debugger;
     throw new Error("whaaa???")
   }
 
   const team = league.teams[teamIndex];
-  const cutoffTopTeam = league.teams[playoffTeams - 1];
-  const cutoffBotTeam = league.teams[playoffTeams];
+  const cutoffTopTeam = league.teams[league.playoffTeams - 1];
+  const cutoffBotTeam = league.teams[league.playoffTeams];
 
   // If the wins are the same as the teams on the playoff cutoff, then calculate the point differential
   if (team.wins === cutoffTopTeam.wins && cutoffTopTeam.wins === cutoffBotTeam.wins) {
@@ -78,6 +80,6 @@ export function clinchedPlayoffs(league: LeagueData, teamName: string, playoffTe
       };
     });
   } else {
-    return teamIndex < playoffTeams;
+    return teamIndex < league.playoffTeams;
   }
 }

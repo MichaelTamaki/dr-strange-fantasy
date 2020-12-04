@@ -38,7 +38,8 @@ describe ("processor", function () {
         teamName1: "Cingus",
         teamName2: "Dingus"
       }
-    ]
+    ],
+    playoffTeams: 2
   };
 
   const outcome1: LeagueData = {
@@ -79,7 +80,8 @@ describe ("processor", function () {
         teamName2: "Dingus",
         team1Won: true
       }
-    ]
+    ],
+    playoffTeams: 2
   };
 
   const outcome2: LeagueData = {
@@ -120,7 +122,8 @@ describe ("processor", function () {
         teamName2: "Dingus",
         team1Won: false
       }
-    ]
+    ],
+    playoffTeams: 2
   };
 
   const outcome3: LeagueData = {
@@ -161,7 +164,8 @@ describe ("processor", function () {
         teamName2: "Dingus",
         team1Won: true
       }
-    ]
+    ],
+    playoffTeams: 2
   };
 
   const outcome4: LeagueData = {
@@ -202,10 +206,9 @@ describe ("processor", function () {
         teamName2: "Dingus",
         team1Won: false
       }
-    ]
+    ],
+    playoffTeams: 2
   };
-
-  const allOutcomes = [outcome1, outcome2, outcome3, outcome4];
 
   describe("produceAllOutcomes", function () {
     it("straight forward", function () {
@@ -229,20 +232,23 @@ describe ("processor", function () {
       closeLeague.week13Matchups[0].team1Won = true;
       closeLeague.week13Matchups[1].team1Won = true;
 
-      expect(clinchedPlayoffs(closeLeague, "Aingus", 1)).toEqual([{ teamName: "Bingus", pointDiff: 100 }]);
-      expect(clinchedPlayoffs(closeLeague, "Bingus", 1)).toEqual([{ teamName: "Aingus", pointDiff: -100 }]);
-      expect(clinchedPlayoffs(closeLeague, "Cingus", 1)).toBe(false);
-      expect(clinchedPlayoffs(closeLeague, "Dingus", 1)).toBe(false);
+      closeLeague.playoffTeams = 1;
+      expect(clinchedPlayoffs(closeLeague, "Aingus")).toEqual([{ teamName: "Bingus", pointDiff: 100 }]);
+      expect(clinchedPlayoffs(closeLeague, "Bingus")).toEqual([{ teamName: "Aingus", pointDiff: -100 }]);
+      expect(clinchedPlayoffs(closeLeague, "Cingus")).toBe(false);
+      expect(clinchedPlayoffs(closeLeague, "Dingus")).toBe(false);
 
-      expect(clinchedPlayoffs(closeLeague, "Aingus", 2)).toBe(true);
-      expect(clinchedPlayoffs(closeLeague, "Bingus", 2)).toBe(true);
-      expect(clinchedPlayoffs(closeLeague, "Cingus", 2)).toBe(false);
-      expect(clinchedPlayoffs(closeLeague, "Dingus", 2)).toBe(false);
+      closeLeague.playoffTeams = 2;
+      expect(clinchedPlayoffs(closeLeague, "Aingus")).toBe(true);
+      expect(clinchedPlayoffs(closeLeague, "Bingus")).toBe(true);
+      expect(clinchedPlayoffs(closeLeague, "Cingus")).toBe(false);
+      expect(clinchedPlayoffs(closeLeague, "Dingus")).toBe(false);
 
-      expect(clinchedPlayoffs(closeLeague, "Aingus", 3)).toBe(true);
-      expect(clinchedPlayoffs(closeLeague, "Bingus", 3)).toBe(true);
-      expect(clinchedPlayoffs(closeLeague, "Cingus", 3)).toEqual([{ teamName: "Dingus", pointDiff: 100 }]);
-      expect(clinchedPlayoffs(closeLeague, "Dingus", 3)).toEqual([{ teamName: "Cingus", pointDiff: -100 }]);
+      closeLeague.playoffTeams = 3;
+      expect(clinchedPlayoffs(closeLeague, "Aingus")).toBe(true);
+      expect(clinchedPlayoffs(closeLeague, "Bingus")).toBe(true);
+      expect(clinchedPlayoffs(closeLeague, "Cingus")).toEqual([{ teamName: "Dingus", pointDiff: 100 }]);
+      expect(clinchedPlayoffs(closeLeague, "Dingus")).toEqual([{ teamName: "Cingus", pointDiff: -100 }]);
     });
   });
 });
